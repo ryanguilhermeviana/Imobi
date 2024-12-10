@@ -54,7 +54,7 @@ def logar(request):
         if not usuario:
             messages.add_message(request, 
                                  constants.ERROR, 
-                                 'Usuário já logado!')
+                                 'Usuário ou senha inválidos!')
             return render(request, 'logar.html')
         else:
             auth.login(request, usuario)
