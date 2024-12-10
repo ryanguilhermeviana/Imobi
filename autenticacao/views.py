@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.messages import constants
+from django.contrib import auth
 
 # Create your views here.
 def cadastro(request):
@@ -42,4 +43,19 @@ def cadastro(request):
             return redirect('cadastro')
 
 def logar(request):
-    return render(request, 'logar.html')
+    if request.method == 'GET':
+        return render(request, 'logar.html')
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        senha = request.POST.get('senha')
+
+        usuario = auth.authenticate(username=username, password=senha)
+
+        if not usuario:
+            messages.add_message(request, 
+                                 constants.ERROR, 
+                                 'Usuário já logado!')
+            return render(request, 'logar.html')
+        else:
+            auth.login(request, usuario)
+            return redirect('/')
