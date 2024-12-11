@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from plataforma.models import Imovel, Cidade
 
@@ -33,3 +33,15 @@ def home(request):
     }
     
     return render(request, 'home.html', context)
+
+
+def imovel(request, id):
+    imovel = get_object_or_404(Imovel, id=id)
+    sugestoes = Imovel.objects.filter(cidade=imovel.cidade).exclude(id=id)[:2]
+    context = {
+        'imovel': imovel,
+        'sugestoes': sugestoes,
+        'id': id
+    }
+
+    return render(request, 'imovel.html', context)

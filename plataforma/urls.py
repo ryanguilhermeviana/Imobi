@@ -3,5 +3,6 @@ from plataforma import views
 
 
 urlpatterns = [
-    path('', views.home, name='home')
+    path('', views.home, name='home'),
+    path('imovel/<str:id>/', views.imovel, name="imovel"),
 ]
