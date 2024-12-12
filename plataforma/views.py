@@ -1,6 +1,6 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from plataforma.models import Imovel, Cidade
+from plataforma.models import Imovel, Cidade, Visitas
 
 
 @login_required(login_url='logar')
@@ -45,3 +45,31 @@ def imovel(request, id):
     }
 
     return render(request, 'imovel.html', context)
+
+
+def agendar_visitas(request):
+    usuario = request.user
+    dia = request.POST.get('dia')
+    horario = request.POST.get('horario')
+    id_imovel = request.POST.get('id_imovel')
+
+    visita = Visitas(
+        imovel_id=id_imovel,
+        usuario=usuario,
+        dia=dia,
+        horario=horario
+    )
+    visita.save()
+
+    return redirect('agendamentos')
+
+
+def agendamentos(request):
+    visitas = Visitas.objects.filter(usuario=request.user)
+    return render(request, "agendamentos.html", {'visitas': visitas})
+
+def cancelar_agendamento(request, id):
+    visitas = get_object_or_404(Visitas, id=id)
+    visitas.status = "C"
+    visitas.save()
+    return redirect('agendamentos')
